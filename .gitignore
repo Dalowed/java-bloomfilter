@@ -3,6 +3,12 @@
 
 # Log file
 *.log
+# other file
+data
+bitmap
+*.idea
+*.target
+bloom-test
 
 # BlueJ files
 *.ctxt

@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+#dalowed.bloom.configuration.BloomConfiguration
