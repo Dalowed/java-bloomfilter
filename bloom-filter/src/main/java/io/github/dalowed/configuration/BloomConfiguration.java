@@ -7,16 +7,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Description // automatic assembly class
- * @Author dalowed
- * @Date 2024-11-18 16:13
+ * auto assembly class
+ * @author dalowed
+ * @since 0.0.1
  */
-
 @Configuration
 @EnableConfigurationProperties(BloomConfigurationProperties.class)
 public class BloomConfiguration {
 
-
+    /**
+     *
+     * @param properties bloomfilter configuration
+     * @return {@link BloomFilter}
+     */
     @Bean
     @ConditionalOnMissingBean
     public BloomFilter bloomFilter(BloomConfigurationProperties properties) {

@@ -1,9 +1,9 @@
 package io.github.dalowed.configuration;
 
 /**
- * @Description // TODO log configuration class
- * @Author dalowed
- * @Date 2024-11-19 9:45
+ * TODO configuration class
+ * @author dalowed
+ * @since 0.0.1
  */
 public class LoggingProperties {
 }

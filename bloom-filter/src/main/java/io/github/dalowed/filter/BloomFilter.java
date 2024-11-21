@@ -22,9 +22,9 @@ import java.util.stream.Stream;
 
 
 /**
- * @Description // 布隆过滤器
- * @Author dalowed
- * @Date 2024-11-12 15:58
+ * bloomfilter
+ * @author dalowed
+ * @since 0.0.1
  */
 public class BloomFilter {
 
@@ -46,6 +46,12 @@ public class BloomFilter {
     private static final String SHA_256 = "SHA-256";
     private static final String MD5 = "MD5";
 
+    /**
+     * Init BloomFilter
+     * @param expectedInsertions expectedInsertions
+     * @param falsePositiveProbability falsePositiveProbability
+     * @param isLogging Whether to enable logs
+     */
     private BloomFilter(long expectedInsertions, double falsePositiveProbability, boolean isLogging) {
         this.isLogging = isLogging;
         this.expectedInsertions = expectedInsertions;
@@ -70,6 +76,10 @@ public class BloomFilter {
         System.out.println("生成的位图大小: " + size + " , 哈希函数个数: " + hashFunctions);
     }
 
+    /**
+     * Recovery bloomFilter constructor
+     * @param bloomInformation bloomfilter information
+     */
     private BloomFilter(BloomInformation bloomInformation) {
         // 是否开启日志
         this.isLogging = bloomInformation.isLogging();
@@ -81,7 +91,7 @@ public class BloomFilter {
         // hash函数个数
         this.hashFunctions = bloomInformation.getHashFunctions();
         // 位图信息
-        this.bitArray = loaddingBitMap(this.size);
+        this.bitArray = loadingBitMap(this.size);
 
         // 哈希函数
         this.hashFunctionsArray = createHashFunctions(hashFunctions);
@@ -92,6 +102,10 @@ public class BloomFilter {
                 .forEach(this.hashFunctionsSaltList::add);
     }
 
+    /**
+     *  Recovery BloomFilter
+     * @return {@link BloomFilter}
+     */
     private static BloomFilter recovery() {
         // 获取信息
         BloomInformation information = getBloomInfo();
@@ -102,6 +116,14 @@ public class BloomFilter {
         return bloomFilter;
     }
 
+    /**
+     * getBloomFilter
+     * @param expectedInsertions expectedInsertions
+     * @param falsePositiveProbability falsePositiveProbability
+     * @param isLogging enable log
+     * @param recovery enable recovery
+     * @return {@link BloomFilter}
+     */
     public static final BloomFilter getBloomFilter(long expectedInsertions, double falsePositiveProbability, boolean isLogging, boolean recovery) {
         if(bloomFilter == null)
             synchronized (BloomFilter.class) {
@@ -112,25 +134,38 @@ public class BloomFilter {
     }
 
 
-    // 计算最佳位数组大小
-    private static long optimalNumOfBits(long n, double p) {
-        // 进行判断
-        if (n <=0) {
-            throw new IllegalArgumentException("expectedInsertions number must be greater than zero(预插入值必须大于0), insert value:" + n);
+    /**
+     * Calculate bitmap size
+     * @param expectedInsertions expectedInsertions
+     * @param falsePositiveProbability falsePositiveProbability
+     * @return {@link long}
+     */
+    private static long optimalNumOfBits(long expectedInsertions, double falsePositiveProbability) {
+        if (expectedInsertions <=0) {
+            throw new IllegalArgumentException("expectedInsertions number must be greater than zero(预插入值必须大于0), insert value:" + expectedInsertions);
         }
-        if (p >= 1 || p <= 0) {
-            throw new IllegalArgumentException("falsePositiveProbability rate must be between 0 and 1(误判率必须在0到1之间), insert value:" + p);
+        if (falsePositiveProbability >= 1 || falsePositiveProbability <= 0) {
+            throw new IllegalArgumentException("falsePositiveProbability rate must be between 0 and 1(误判率必须在0到1之间), insert value:" + falsePositiveProbability);
         }
 
-        return (long) Math.ceil((-n * Math.log(p) / (Math.log(2) * Math.log(2))));
+        return (long) Math.ceil((-expectedInsertions * Math.log(falsePositiveProbability) / (Math.log(2) * Math.log(2))));
     }
 
-    // 计算最佳哈希函数数量
-    private static int optimalNumOfHashFunctions(long n, long m) {
-        return Math.max(1, (int) Math.ceil((double) m / n * Math.log(2)));
+    /**
+     * Calculate the optimal number of hash functions
+     * @param expectedInsertions expectedInsertions
+     * @param size bitmap size
+     * @return {@link int}
+     */
+    private static int optimalNumOfHashFunctions(long expectedInsertions, long size) {
+        return Math.max(1, (int) Math.ceil((double) size / expectedInsertions * Math.log(2)));
     }
 
-    // 创建哈希函数数组
+    /**
+     * Create an array of hash functions
+     * @param count Number of hash functions
+     * @return {@link Function }
+     */
     private Function<String, BigInteger>[] createHashFunctions(int count) {
 
         Function<String, BigInteger>[] functions = new Function[count];
@@ -146,7 +181,11 @@ public class BloomFilter {
         return functions;
     }
 
-    // 添加元素到布隆过滤器
+    /**
+     * add element to bloomfilter
+     * @param element element
+     * @return {@link Boolean}
+     */
     public final boolean add(String element) {
 
         element = element.trim();
@@ -163,7 +202,11 @@ public class BloomFilter {
         return true;
     }
 
-    // 检查元素是否可能存在于布隆过滤器中
+    /**
+     * check if element exists
+     * @param element element
+     * @return {@link Boolean}
+     */
     public final boolean isContain(String element) {
         for (Function<String, BigInteger> hashFunction : hashFunctionsArray) {
             if (!getBit(hashFunction.apply(element))) {
@@ -176,25 +219,40 @@ public class BloomFilter {
     }
 
 
+    /**
+     * Set bitmap
+     * @param hash hash of element
+     */
     // 设置位数组中的某一位
-    private void setBit(BigInteger index) {
+    private void setBit(BigInteger hash) {
 //        long arrayIndex = index / 64;
 //        long bitIndex = index % 64;
 //        System.out.println("hash值:" + index);
-        int arrayIndex = index.divide(BigInteger.valueOf(64)).intValue();
-        int bitIndex = index.remainder(BigInteger.valueOf(64)).intValue();
+        int arrayIndex = hash.divide(BigInteger.valueOf(64)).intValue();
+        int bitIndex = hash.remainder(BigInteger.valueOf(64)).intValue();
         bitArray[arrayIndex] |= (1L << bitIndex);
     }
 
+    /**
+     * Get bitmap
+     * @param hash hash of element
+     * @return {@link Boolean}
+     */
     // 获取位数组中的某一位
-    private boolean getBit(BigInteger index) {
+    private Boolean getBit(BigInteger hash) {
 //        long arrayIndex = index / 64;
 //        long bitIndex = index % 64;
-        int arrayIndex = index.divide(BigInteger.valueOf(64)).intValue();
-        int bitIndex = index.remainder(BigInteger.valueOf(64)).intValue();
+        int arrayIndex = hash.divide(BigInteger.valueOf(64)).intValue();
+        int bitIndex = hash.remainder(BigInteger.valueOf(64)).intValue();
         return (bitArray[arrayIndex] & (1L << bitIndex)) != 0;
     }
 
+    /**
+     *
+     * @param value hash
+     * @param hashFunctionIndex Hash function location
+     * @return {@link BigInteger}
+     */
     // 使用不同的种子值生成多个独立的哈希值
     //  md5 sha-1 sha-256
     @Deprecated
@@ -228,6 +286,12 @@ public class BloomFilter {
         return bigInteger.mod(BigInteger.valueOf(size));
     }
 
+    /**
+     * calculate element`s hash by hash function and salt
+     * @param value element
+     * @param hashFunctionIndex hashFunctionIndex
+     * @return {@link BigInteger}
+     */
     private BigInteger hash(String value, int hashFunctionIndex) {
         String seed = hashFunctionsSaltList.get(hashFunctionIndex);
 
@@ -243,54 +307,90 @@ public class BloomFilter {
     }
 
 
-    private byte[] hmacSHA256(String data, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {
+    /**
+     * hash algorithm
+     * @param element data
+     * @param secretKey secretKey
+     * @return {@link byte[]}
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     */
+    private byte[] hmacSHA256(String element, String secretKey) throws NoSuchAlgorithmException, InvalidKeyException {
         // 创建 Mac 实例并初始化
         Mac sha256Hmac = Mac.getInstance("HmacSHA256");
         SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), "HmacSHA256");
         sha256Hmac.init(secretKeySpec);
-
         // 计算哈希值
-        byte[] hashBytes = sha256Hmac.doFinal(data.getBytes());
-
+        byte[] hashBytes = sha256Hmac.doFinal(element.getBytes());
         return hashBytes;
     }
 
 
+    /**
+     * getSize
+     * @return {@link Long}
+     */
     public long getSize() {
         return size;
     }
 
+    /**
+     * getBitArray
+     * @return {@link Long[]}
+     */
     public long[] getBitArray() {
         return bitArray;
     }
 
+    /**
+     * getHashFunctionsSaltList
+     * @return {@link List<String> }
+     */
     public List<String> getHashFunctionsSaltList() {
         return hashFunctionsSaltList;
     }
 
+    /**
+     * get isLogging
+     * @return {@link Boolean}
+     */
     public boolean isLogging() {
         return isLogging;
     }
-
+    /**
+     * getHashFunctions
+     * @return {@link Integer}
+     */
     public int getHashFunctions() {
         return hashFunctions;
     }
-
+    /**
+     * setBitArray
+     * @return
+     */
     private void setBitArray(long[] bitArray) {
         this.bitArray = bitArray;
     }
 
+    /**
+     * getExpectedInsertions
+     * @return {@link Long}
+     */
     public long getExpectedInsertions() {
         return expectedInsertions;
     }
 
+    /**
+     * getFalsePositiveProbability
+     * @return {@link Double}
+     */
     public double getFalsePositiveProbability() {
         return falsePositiveProbability;
     }
 
     /**
-     * 生成二进制文件
-     * @return
+     * generate bitmap
+     * @return {@link Boolean}
      */
     public boolean generatorBitmapFile() {
         FileOutputStream fos = null;
@@ -329,10 +429,13 @@ public class BloomFilter {
         }
     }
 
+    /**
+     * checkFile
+     * @return {@link Boolean}
+     */
     private boolean checkFile(File file) {
         // 确保父目录存在
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-//                System.out.println("Failed to create directories.");
             logIfEnabled(log::error, "Failed to create directories.");
             return false;
         }
@@ -340,7 +443,6 @@ public class BloomFilter {
         // 确保文件存在
         try {
             if (!file.exists() && !file.createNewFile()) {
-    //                System.out.println("Failed to create file.");
                 logIfEnabled(log::error, "Failed to create file.");
                 return false;
             }
@@ -351,6 +453,10 @@ public class BloomFilter {
         return true;
     }
 
+    /**
+     * Generate filter information(json)
+     * @return {@link Boolean}
+     */
     // 生成状态信息
     public boolean generatorInfo() {
         FileOutputStream fileOutputStream = null;
@@ -393,6 +499,11 @@ public class BloomFilter {
         }
     }
 
+    /**
+     * logIfEnabled
+     * @param logAction logAction
+     * @param message message
+     */
     private void logIfEnabled(Consumer<String> logAction, String message) {
         if (bloomFilter.isLogging()) {
             logAction.accept(message);
@@ -402,9 +513,9 @@ public class BloomFilter {
     }
 
     /**
-     * 载入相关信息
+     * loading bloomfilter information
      */
-    private void loaddingInfo() {
+    private void loadingInfo() {
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream("bitmap/info.txt");
@@ -427,9 +538,11 @@ public class BloomFilter {
     }
 
     /**
-     * 载入bitmap文件
+     * loading bitmap
+     * @param size bitmap size
+     * @return {@link Long[] }
      */
-    private static long[] loaddingBitMap(long size) {
+    private static long[] loadingBitMap(long size) {
         File filename = new File("bitmap/bitmap.bin");
         BufferedInputStream in = null;
         try {
@@ -462,8 +575,8 @@ public class BloomFilter {
     }
 
     /**
-     *  TODO json转对象
-     * @return BloomInformation
+     *  TODO json to object
+     * @return {@link BloomInformation }
      */
     private static BloomInformation getBloomInfo() {
         FileInputStream fileInputStream = null;

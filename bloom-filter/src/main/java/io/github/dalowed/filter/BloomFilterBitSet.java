@@ -9,11 +9,14 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.function.Function;
 
+
+
 /**
- * @Description // 基于 BitSet 实现的布隆过滤器
- * @Author dalowed
- * @Date 2024-11-12 14:58
+ * bloomfilter based on BitSet
+ * @author dalowed
+ * @since 0.0.1
  */
+
 @Deprecated
 public class BloomFilterBitSet {
 
@@ -26,6 +29,11 @@ public class BloomFilterBitSet {
     private final ArrayList<String> hashFunctionsList = new ArrayList<>();
     private final ArrayList<String> hashFunctionsSalt = new ArrayList<>();
 
+    /**
+     * Init BloomFilterBitSet
+     * @param expectedInsertions expectedInsertions
+     * @param falsePositiveProbability falsePositiveProbability
+     */
     public BloomFilterBitSet(long expectedInsertions, double falsePositiveProbability) {
         this.size = optimalNumOfBits(expectedInsertions, falsePositiveProbability);
         this.hashFunctions = optimalNumOfHashFunctions(expectedInsertions, size);
@@ -33,24 +41,37 @@ public class BloomFilterBitSet {
         this.hashFunctionsArray = createHashFunctions(hashFunctions);
     }
 
-    // 计算最佳位数组大小
-    private static int optimalNumOfBits(long n, double p) {
-        if (p == 0) {
-            p = Double.MIN_VALUE;
+    /**
+     * caculate bitmap size
+     * @param expectedInsertions expectedInsertions
+     * @param falsePositiveProbability falsePositiveProbability
+     * @return {@link Integer}
+     */
+    private static int optimalNumOfBits(long expectedInsertions, double falsePositiveProbability) {
+        if (falsePositiveProbability == 0) {
+            falsePositiveProbability = Double.MIN_VALUE;
         }
-        return (int) Math.ceil((-n * Math.log(p) / (Math.log(2) * Math.log(2))));
+        return (int) Math.ceil((-expectedInsertions * Math.log(falsePositiveProbability) / (Math.log(2) * Math.log(2))));
     }
 
-    // 计算最佳哈希函数数量
-    private static int optimalNumOfHashFunctions(long n, long m) {
-        return Math.max(1, (int) Math.round((double) m / n * Math.log(2)));
+    /**
+     * caculate number of hash functions
+     * @param expectedInsertions expectedInsertions
+     * @param size bitmap size
+     * @return {@link Integer}
+     */
+    private static int optimalNumOfHashFunctions(long expectedInsertions, long size) {
+        return Math.max(1, (int) Math.round((double) size / expectedInsertions * Math.log(2)));
     }
 
-    // 创建哈希函数数组
+    /**
+     * create arry of hash functions
+     * @param count hash functions counts
+     * @return {@link Function<String,Integer>[] }
+     */
     private Function<String, Integer>[] createHashFunctions(int count) {
-        // 生成盐
         for (int i = 0; i < count; i++) {
-            // TODO 生成盐
+            // create salt
             hashFunctionsSalt.add("hello");
         }
 
@@ -74,7 +95,10 @@ public class BloomFilterBitSet {
         return functions;
     }
 
-    // 添加元素到布隆过滤器
+    /**
+     * add element to bloomfilter
+     * @param element element
+     */
     public final void add(String element) {
         for (Function<String, Integer> hashFunction : hashFunctionsArray) {
             bitSet.set(hashFunction.apply(element));
@@ -82,7 +106,11 @@ public class BloomFilterBitSet {
         log.info("元素 {} 添加成功", element);
     }
 
-    // 检查元素是否可能存在于布隆过滤器中
+    /**
+     * check element
+     * @param element element
+     * @return {@link Boolean}
+     */
     public final boolean mightContain(String element) {
         for (Function<String, Integer> hashFunction : hashFunctionsArray) {
             if (!bitSet.get(hashFunction.apply(element))) {
@@ -94,32 +122,47 @@ public class BloomFilterBitSet {
         return true;
     }
 
-    // 使用不同的哈希算法生成多个哈希值
-    private int hash(String value, int hashFunctionIndex) {
-        StringBuilder stringBuilder = new StringBuilder(value);
+    /**
+     * use different hash functions
+     * @param element element
+     * @param hashFunctionIndex
+     * @return {@link Integer}
+     */
+    private int hash(String element, int hashFunctionIndex) {
+        StringBuilder stringBuilder = new StringBuilder(element);
         stringBuilder.append(hashFunctionsSalt.get(hashFunctionIndex));
-        value = stringBuilder.toString();
+        element = stringBuilder.toString();
         switch (hashFunctionIndex % 3) { // 使用模运算来循环选择不同的哈希函数
             case 0:
-                return hashHashMap(value);
+                return hashHashMap(element);
             case 1:
-                return hashMurmurHash3(value);
+                return hashMurmurHash3(element);
             case 2:
-                return hash3(value);
+                return hash3(element);
             default:
                 throw new IllegalArgumentException("Invalid hash function index: " + hashFunctionIndex);
         }
     }
 
+    /**
+     * bad hash
+     * @param element element
+     * @return {@link Integer}
+     */
     // 第一个哈希函数：HashMap哈希算法
-    private int hashHashMap(String value) {
+    @Deprecated
+    private int hashHashMap(String element) {
         int h;
-        return (value == null) ? 0 :
-                Math.abs(((h = value.hashCode()) ^ (h >>> 16)) % size);
+        return (element == null) ? 0 :
+                Math.abs(((h = element.hashCode()) ^ (h >>> 16)) % size);
     }
 
-    // 第二个哈希函数：MurmurHash3
-    private int hashMurmurHash3(String value) {
+    /**
+     * MurmurHash3
+     * @param element element
+     * @return {@link Integer}
+     */
+    private int hashMurmurHash3(String element) {
         final int c1 = 0xcc9e2d51;
         final int c2 = 0x1b873593;
         final int r1 = 15;
@@ -128,7 +171,7 @@ public class BloomFilterBitSet {
         final int n = 0xe6546b64;
 
         int h1 = 0;
-        byte[] data = value.getBytes();
+        byte[] data = element.getBytes();
         int len = data.length;
         int roundedEnd = len & 0xfffffffc;
 
@@ -169,18 +212,31 @@ public class BloomFilterBitSet {
     }
 
 
-    private int hash3(String value) {
+    /**
+     * simple of hash
+     * @param element
+     * @return {@link Integer}
+     */
+    private int hash3(String element) {
         int hash = 0;
-        for (int i = 0; i < value.length(); i++) {
-            hash = hash * 17 + value.charAt(i);
+        for (int i = 0; i < element.length(); i++) {
+            hash = hash * 17 + element.charAt(i);
         }
         return Math.abs(hash % size);
     }
 
+    /**
+     * getSize
+     * @return {@link Integer}
+     */
     public int getSize() {
         return size;
     }
 
+    /**
+     * getHashFunctionsList
+     * @return {@link ArrayList<String>}
+     */
     public ArrayList<String> getHashFunctionsList() {
         return hashFunctionsList;
     }

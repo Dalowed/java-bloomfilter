@@ -3,10 +3,11 @@ package io.github.dalowed.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+
 /**
- * @Description configuration class
- * @Author dalowed
- * @Date 2024-11-18 16:39
+ * configuration class
+ * @author dalowed
+ * @since 0.0.1
  */
 @ConfigurationProperties(prefix = "bloom-filter")
 public class BloomConfigurationProperties {
@@ -22,34 +23,66 @@ public class BloomConfigurationProperties {
 
     private boolean recovery = false;
 
+    /**
+     * get recovery
+     * @return {@link Boolean}
+     */
     public boolean isRecovery() {
         return recovery;
     }
 
+    /**
+     * enable recovery
+     * @param recovery recovery
+     */
     public void setRecovery(boolean recovery) {
         this.recovery = recovery;
     }
 
+    /**
+     * setExpectedInsertions
+     * @param expectedInsertions expectedInsertions
+     */
     public void setExpectedInsertions(long expectedInsertions) {
         this.expectedInsertions = expectedInsertions;
     }
 
+    /**
+     * setFalsePositiveProbability
+     * @param falsePositiveProbability falsePositiveProbability
+     */
     public void setFalsePositiveProbability(double falsePositiveProbability) {
         this.falsePositiveProbability = falsePositiveProbability;
     }
 
+    /**
+     * setEnableLogging
+     * @param enableLogging enable log
+     */
     public void setEnableLogging(boolean enableLogging) {
         this.enableLogging = enableLogging;
     }
 
+    /**
+     * isEnableLogging
+     * @return {@link Boolean}
+     */
     public boolean isEnableLogging() {
         return enableLogging;
     }
 
+    /**
+     * getExpectedInsertions
+     * @return {@link Long}
+     */
     public long getExpectedInsertions() {
         return expectedInsertions;
     }
 
+    /**
+     * getFalsePositiveProbability
+     * @return {@link Double}
+     */
     public double getFalsePositiveProbability() {
         return falsePositiveProbability;
     }

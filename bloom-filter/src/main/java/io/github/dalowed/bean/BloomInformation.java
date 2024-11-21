@@ -4,9 +4,9 @@ import java.util.List;
 
 
 /**
- * @Description // bloomfilter info bean
- * @Author dalowed
- * @Date 2024-11-19 14:13
+ * bloomfilter information bean
+ * @author dalowed
+ * @since 0.0.1
  */
 public class BloomInformation {
     private String description; // 描述
@@ -18,6 +18,16 @@ public class BloomInformation {
     private boolean isLogging;
 
 
+    /**
+     * init BloomInformation
+     * @param description description
+     * @param size bitmap size
+     * @param hashFunctions hashFunction counts
+     * @param seeds seeds
+     * @param expectedInsertions expectedInsertions
+     * @param falsePositiveProbability falsePositiveProbability
+     * @param isLogging enable log
+     */
     public BloomInformation(String description, long size, int hashFunctions, List<String> seeds, long expectedInsertions, double falsePositiveProbability, boolean isLogging) {
         this.description = description;
         this.size = size;
@@ -28,67 +38,129 @@ public class BloomInformation {
         this.isLogging = isLogging;
     }
 
+    /**
+     * No-argument constructor
+     */
     public BloomInformation() {
     }
 
 
-
+    /**
+     * getExpectedInsertions
+     * @return {@link Long}
+     */
     public long getExpectedInsertions() {
         return expectedInsertions;
     }
 
+    /**
+     * setExpectedInsertions
+     * @param expectedInsertions expectedInsertions
+     */
     public void setExpectedInsertions(long expectedInsertions) {
         this.expectedInsertions = expectedInsertions;
     }
 
+    /**
+     * getFalsePositiveProbability
+     * @return {@link Double}
+     */
     public double getFalsePositiveProbability() {
         return falsePositiveProbability;
     }
 
+    /**
+     * setFalsePositiveProbability
+     * @param falsePositiveProbability falsePositiveProbability
+     */
     public void setFalsePositiveProbability(double falsePositiveProbability) {
         this.falsePositiveProbability = falsePositiveProbability;
     }
 
+    /**
+     * isLogging
+     * @return {@link Boolean}
+     */
     public boolean isLogging() {
         return isLogging;
     }
 
+    /**
+     * setLogging
+     * @param logging enable log
+     */
     public void setLogging(boolean logging) {
         isLogging = logging;
     }
 
+    /**
+     * getDescription
+     * @return {@link String}
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * setDescription
+     * @param description description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * getSize
+     * @return {@link Long}
+     */
     public long getSize() {
         return size;
     }
 
+    /**
+     * setSize
+     * @param size bitmap size
+     */
     public void setSize(long size) {
         this.size = size;
     }
 
+    /**
+     * getHashFunctions
+     * @return {@link Integer}
+     */
     public int getHashFunctions() {
         return hashFunctions;
     }
 
+    /**
+     * setHashFunctions
+     * @param hashFunctions hashFunctions counts
+     */
     public void setHashFunctions(int hashFunctions) {
         this.hashFunctions = hashFunctions;
     }
 
+    /**
+     * getSeeds
+     * @return {@link List<String> }
+     */
     public List<String> getSeeds() {
         return seeds;
     }
 
+    /**
+     * setSeeds
+     * @param seeds seeds
+     */
     public void setSeeds(List<String> seeds) {
         this.seeds = seeds;
     }
 
+    /**
+     * toJsonString
+     * @return {@link String}
+     */
     @Override
     public final String toString() {
         StringBuilder sb = new StringBuilder();
@@ -113,6 +185,11 @@ public class BloomInformation {
         return sb.toString();
     }
 
+    /**
+     * escapeJson
+     * @param value value
+     * @return {@link String}
+     */
     private String escapeJson(String value) {
         if (value == null) {
             return "null";

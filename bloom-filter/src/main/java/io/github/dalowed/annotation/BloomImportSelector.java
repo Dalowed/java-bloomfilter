@@ -7,8 +7,18 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.Map;
 
 
+/**
+ * Annotation effective class
+ * @author dalowed
+ * @since 0.0.1
+ */
 public class BloomImportSelector implements ImportSelector {
 
+    /**
+     * introduce BloomConfiguration
+     * @param metadata meta annotation
+     * @return {@link String[] }
+     */
     @Override
     public String[] selectImports(AnnotationMetadata metadata) {
         Map<String, Object> attributes = metadata.getAnnotationAttributes(EnableBloomFilter.class.getName());

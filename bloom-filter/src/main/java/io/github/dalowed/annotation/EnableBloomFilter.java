@@ -7,14 +7,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- * @Description start via annotation
- * @Author dalowed
- * @Date 2024-11-18 16:31
+ * enable bloomfilter annotation
+ * @author dalowed
+ * @since 0.0.1
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Import(BloomImportSelector.class)
 public @interface EnableBloomFilter {
+    /**
+     * whether to enable Bloom filter
+     * @return {@link Boolean}
+     */
     boolean enabled() default true;
 }
