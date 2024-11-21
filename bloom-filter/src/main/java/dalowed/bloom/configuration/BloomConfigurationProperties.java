@@ -20,6 +20,16 @@ public class BloomConfigurationProperties {
     // 映射 bloomFilterLong.enableLogging,是否开启日志
     private boolean enableLogging = true;
 
+    private boolean recovery = false;
+
+    public boolean isRecovery() {
+        return recovery;
+    }
+
+    public void setRecovery(boolean recovery) {
+        this.recovery = recovery;
+    }
+
     public void setExpectedInsertions(long expectedInsertions) {
         this.expectedInsertions = expectedInsertions;
     }

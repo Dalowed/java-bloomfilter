@@ -25,6 +25,7 @@
 
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -35,6 +36,7 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -45,14 +47,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <repository>
-            <id>your-repo-id</id>
-            <name>Your Repository</name>
-            <url>https://your-repository-url/releases</url>
-        </repository>
-    </distributionManagement>
 
 
 </project>
