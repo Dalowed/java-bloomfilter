@@ -1,10 +1,10 @@
-package dalowed.bloom.bean;
+package io.github.dalowed.bean;
 
 import java.util.List;
 
 
 /**
- * @Description // 配置文件类
+ * @Description // bloomfilter info bean
  * @Author dalowed
  * @Date 2024-11-19 14:13
  */

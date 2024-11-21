@@ -1,4 +1,4 @@
-package dalowed.bloom.filter;
+package io.github.dalowed.filter;
 
 
 
@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.UUID;
 import java.util.function.Function;
 
 /**

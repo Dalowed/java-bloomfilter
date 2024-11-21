@@ -1,4 +1,4 @@
-package dalowed.bloom.annotation;
+package io.github.dalowed.annotation;
 
 import org.springframework.context.annotation.Import;
 
@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @Description // 注解启动
+ * @Description start via annotation
  * @Author dalowed
  * @Date 2024-11-18 16:31
  */

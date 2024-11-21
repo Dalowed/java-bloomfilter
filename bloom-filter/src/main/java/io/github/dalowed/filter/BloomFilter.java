@@ -1,6 +1,6 @@
-package dalowed.bloom.filter;
+package io.github.dalowed.filter;
 
-import dalowed.bloom.bean.BloomInformation;
+import io.github.dalowed.bean.BloomInformation;
 import io.micrometer.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

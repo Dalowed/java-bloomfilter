@@ -1,10 +1,10 @@
-package dalowed.bloom.configuration;
+package io.github.dalowed.configuration;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * @Description 布隆过滤器配置文件类
+ * @Description configuration class
  * @Author dalowed
  * @Date 2024-11-18 16:39
  */

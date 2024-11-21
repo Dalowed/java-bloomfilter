@@ -3,18 +3,44 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>dalowed.bloom</groupId>
+    <groupId>io.github.dalowed</groupId>
     <artifactId>bloomfilter-spring-boot-starter</artifactId>
-    <version>v1.0</version>
+    <version>0.0.1</version>
+    <name>bloomfilter</name>
+    <description>simple bloomfilter based on Java</description>
+    <url>https://github.com/dalowed/bloomfilter</url>
     <packaging>jar</packaging>
 
-    <name>BloomFilter</name>
-    <description>Powerd by dalowed</description>
-    <url>https://github.com/dalowed/bloom-filter</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>io</id>
+            <name>io</name>
+            <email>dalowed123@outlook.com</email>
+            <roles>
+                <role>Project Manager</role>
+                <role>Coder</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>https://github.com/dalowed/bloomfilter.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:dalowed/bloomfilter.git
+        </developerConnection>
+        <url>https://github.com/dalowed/bloomfilter</url>
+    </scm>
 
     <properties>
         <java.version>17</java.version>
         <spring-boot.version>3.3.2</spring-boot.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <parent>
@@ -41,10 +67,64 @@
 
     <build>
         <plugins>
+            <!--   central发布插件    -->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>io</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                </configuration>
             </plugin>
+            <!--   source源码插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--   javadoc插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.8.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <executable>D:\code\GnuPG\bin\gpg.exe</executable>
+                    <keyname>io</keyname>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

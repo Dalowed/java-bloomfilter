@@ -1,13 +1,13 @@
-package dalowed.bloom.configuration;
+package io.github.dalowed.configuration;
 
-import dalowed.bloom.filter.BloomFilter;
+import io.github.dalowed.filter.BloomFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @Description // 自动装配类
+ * @Description // automatic assembly class
  * @Author dalowed
  * @Date 2024-11-18 16:13
  */

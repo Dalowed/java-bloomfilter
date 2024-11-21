@@ -7,8 +7,8 @@ bloom-filter:
 
 logging:
   level:
-    root: warn
-    dalowed.bloom: info
+    root: info
+    io.github.dalowed: debug
   file:
     name: bitmap/bloomLog.txt
   pattern:
