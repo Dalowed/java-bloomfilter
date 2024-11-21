@@ -455,10 +455,11 @@ public class BloomFilter {
 
     /**
      * Generate filter information(json)
+     * @param message message
      * @return {@link Boolean}
      */
     // 生成状态信息
-    public boolean generatorInfo() {
+    public boolean generatorInfo(String message) {
         FileOutputStream fileOutputStream = null;
         try {
             String filePath = "bitmap/info.txt";
@@ -476,7 +477,7 @@ public class BloomFilter {
             information.setExpectedInsertions(bloomFilter.getExpectedInsertions());
             information.setFalsePositiveProbability(bloomFilter.getFalsePositiveProbability());
 
-            information.setDescription("位图相关信息");
+            information.setDescription(message);
 
             fileOutputStream.write(information.toString().getBytes());
             fileOutputStream.flush();
