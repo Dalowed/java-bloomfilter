@@ -9,6 +9,7 @@ bitmap
 *.idea
 *.target
 bloom-test
+target
 
 # BlueJ files
 *.ctxt
