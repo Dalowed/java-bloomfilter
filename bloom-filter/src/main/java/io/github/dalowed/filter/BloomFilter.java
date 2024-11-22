@@ -64,7 +64,7 @@ public class BloomFilter {
 //        log.info("哈希函数个数:{}", this.hashFunctions);
 
         // 计算 bitArray 的长度，确保不会超过 Integer.MAX_VALUE
-        long bitArrayLength = (size + 63) / 64;
+        long bitArrayLength = (size + 64) / 64;
         if (bitArrayLength > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("The required bit array length exceeds the maximum integer value.");
         }
@@ -228,7 +228,7 @@ public class BloomFilter {
 //        long arrayIndex = index / 64;
 //        long bitIndex = index % 64;
 //        System.out.println("hash值:" + index);
-        int arrayIndex = hash.divide(BigInteger.valueOf(64)).intValue();
+        int arrayIndex = hash.divide(BigInteger.valueOf(bitArray.length)).intValue();
         int bitIndex = hash.remainder(BigInteger.valueOf(64)).intValue();
         bitArray[arrayIndex] |= (1L << bitIndex);
     }
@@ -242,7 +242,7 @@ public class BloomFilter {
     private Boolean getBit(BigInteger hash) {
 //        long arrayIndex = index / 64;
 //        long bitIndex = index % 64;
-        int arrayIndex = hash.divide(BigInteger.valueOf(64)).intValue();
+        int arrayIndex = hash.remainder(BigInteger.valueOf(bitArray.length)).intValue();
         int bitIndex = hash.remainder(BigInteger.valueOf(64)).intValue();
         return (bitArray[arrayIndex] & (1L << bitIndex)) != 0;
     }
@@ -303,7 +303,7 @@ public class BloomFilter {
             logIfEnabled(log::error, "计算哈希失败: " + e.getMessage());
         }
 
-        return new BigInteger(1, bytes).mod(BigInteger.valueOf(size));
+        return new BigInteger(1, bytes);
     }
 
 
