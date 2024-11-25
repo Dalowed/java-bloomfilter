@@ -142,6 +142,10 @@ public class BloomFilter {
         return bloomFilter;
     }
 
+    /**
+     * getBloomFilter
+     * @return {@link BloomFilter}
+     */
     public static final BloomFilter getBloomFilter() {
         return bloomFilter;
     }

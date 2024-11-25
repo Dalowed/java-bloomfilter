@@ -8,7 +8,7 @@
     <version>0.0.1</version>
     <name>bloomfilter</name>
     <description>simple bloomfilter based on Java</description>
-    <url>https://github.com/dalowed/bloomfilter</url>
+    <url>https://github.com/dalowed/java-bloomfilter</url>
     <packaging>jar</packaging>
 
     <licenses>
@@ -20,8 +20,8 @@
 
     <developers>
         <developer>
-            <id>io</id>
-            <name>io</name>
+            <id>dalowed</id>
+            <name>dalowed</name>
             <email>dalowed123@outlook.com</email>
             <roles>
                 <role>Project Manager</role>
@@ -31,10 +31,10 @@
     </developers>
 
     <scm>
-        <connection>https://github.com/dalowed/bloomfilter.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com:dalowed/bloomfilter.git
+        <connection>https://github.com/dalowed/java-bloomfilter.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:dalowed/java-bloomfilter.git
         </developerConnection>
-        <url>https://github.com/dalowed/bloomfilter</url>
+        <url>https://github.com/dalowed/java-bloomfilter</url>
     </scm>
 
     <properties>
@@ -80,7 +80,7 @@
                 <version>0.4.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <publishingServerId>io</publishingServerId>
+                    <publishingServerId>dalowed</publishingServerId>
                     <tokenAuth>true</tokenAuth>
                 </configuration>
             </plugin>
@@ -118,7 +118,7 @@
                 <version>1.5</version>
                 <configuration>
                     <executable>D:\code\GnuPG\bin\gpg.exe</executable>
-                    <keyname>io</keyname>
+                    <keyname>dalowed</keyname>
                 </configuration>
                 <executions>
                     <execution>
