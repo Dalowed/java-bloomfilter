@@ -21,6 +21,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import static io.github.dalowed.constans.CommonConstans.MD5;
+import static io.github.dalowed.constans.CommonConstans.SHA_1;
+import static io.github.dalowed.constans.CommonConstans.SHA_256;
+
 
 /**
  * bloomfilter
@@ -43,9 +47,6 @@ public class BloomFilter {
 
     private final boolean isLogging;
 
-    private static final String SHA_1 = "SHA-1";
-    private static final String SHA_256 = "SHA-256";
-    private static final String MD5 = "MD5";
 
     /**
      * Init BloomFilter
