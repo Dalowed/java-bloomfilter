@@ -21,9 +21,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static io.github.dalowed.constans.CommonConstans.MD5;
-import static io.github.dalowed.constans.CommonConstans.SHA_1;
-import static io.github.dalowed.constans.CommonConstans.SHA_256;
+import static io.github.dalowed.constants.CommonConstants.MD5;
+import static io.github.dalowed.constants.CommonConstants.SHA_1;
+import static io.github.dalowed.constants.CommonConstants.SHA_256;
 
 
 /**
