@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-#dalowed.bloom.configuration.BloomConfiguration
+#io.github.dalowed.filter.BloomFilter

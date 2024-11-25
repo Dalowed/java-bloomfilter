@@ -1,6 +1,6 @@
-package io.github.dalowed.configuration;
+package io.github.dalowed.filter;
 
-import io.github.dalowed.filter.BloomFilter;
+import io.github.dalowed.configuration.BloomConfigurationProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

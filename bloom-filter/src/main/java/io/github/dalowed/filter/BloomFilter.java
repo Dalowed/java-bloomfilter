@@ -1,5 +1,6 @@
 package io.github.dalowed.filter;
 
+import com.alibaba.fastjson.JSON;
 import io.github.dalowed.bean.BloomInformation;
 import io.micrometer.common.util.StringUtils;
 import org.slf4j.Logger;
@@ -48,15 +49,17 @@ public class BloomFilter {
 
     /**
      * Init BloomFilter
-     * @param expectedInsertions expectedInsertions
+     *
+     * @param expectedInsertions       expectedInsertions
      * @param falsePositiveProbability falsePositiveProbability
-     * @param isLogging Whether to enable logs
+     * @param isLogging                Whether to enable logs
      */
     private BloomFilter(long expectedInsertions, double falsePositiveProbability, boolean isLogging) {
         this.isLogging = isLogging;
         this.expectedInsertions = expectedInsertions;
         this.falsePositiveProbability = falsePositiveProbability;
-        System.out.println("预计插入: " + expectedInsertions + ", 误判率: " + falsePositiveProbability);
+
+        logIfEnabled(log::info, "预计插入: " + expectedInsertions + ", 误判率: " + falsePositiveProbability);
 
         this.size = optimalNumOfBits(expectedInsertions, falsePositiveProbability);
 //        log.info("位图大小:{}", this.size);
@@ -73,11 +76,13 @@ public class BloomFilter {
         this.hashFunctionsArray = createHashFunctions(hashFunctions);
 
 //        log.info("生成的位图大小:{}, 哈希函数个数:{}", size, hashFunctions);
-        System.out.println("生成的位图大小: " + size + " , 哈希函数个数: " + hashFunctions);
+
+        logIfEnabled(log::info, "生成的位图大小: " + size + " , 哈希函数个数: " + hashFunctions);
     }
 
     /**
      * Recovery bloomFilter constructor
+     *
      * @param bloomInformation bloomfilter information
      */
     private BloomFilter(BloomInformation bloomInformation) {
@@ -100,10 +105,13 @@ public class BloomFilter {
         Stream.ofNullable(bloomInformation.getSeeds())
                 .flatMap(List::stream)
                 .forEach(this.hashFunctionsSaltList::add);
+
+        logIfEnabled(log::info, "恢复过滤器:" + "预计过滤数:" + bloomInformation.getExpectedInsertions() + ", 误判率:" + bloomInformation.getFalsePositiveProbability());
     }
 
     /**
-     *  Recovery BloomFilter
+     * Recovery BloomFilter
+     *
      * @return {@link BloomFilter}
      */
     private static BloomFilter recovery() {
@@ -118,20 +126,26 @@ public class BloomFilter {
 
     /**
      * getBloomFilter
-     * @param expectedInsertions expectedInsertions
+     *
+     * @param expectedInsertions       expectedInsertions
      * @param falsePositiveProbability falsePositiveProbability
-     * @param isLogging enable log
-     * @param recovery enable recovery
+     * @param isLogging                enable log
+     * @param recovery                 enable recovery
      * @return {@link BloomFilter}
      */
-    public static final BloomFilter getBloomFilter(long expectedInsertions, double falsePositiveProbability, boolean isLogging, boolean recovery) {
-        if(bloomFilter == null)
+    protected static final BloomFilter getBloomFilter(long expectedInsertions, double falsePositiveProbability, boolean isLogging, boolean recovery) {
+        if (bloomFilter == null)
             synchronized (BloomFilter.class) {
                 if (bloomFilter == null)
                     bloomFilter = (recovery ? recovery() : new BloomFilter(expectedInsertions, falsePositiveProbability, isLogging));
             }
         return bloomFilter;
     }
+
+    public static final BloomFilter getBloomFilter() {
+        return bloomFilter;
+    }
+
 
 
     /**
@@ -228,7 +242,7 @@ public class BloomFilter {
 //        long arrayIndex = index / 64;
 //        long bitIndex = index % 64;
 //        System.out.println("hash值:" + index);
-        int arrayIndex = hash.divide(BigInteger.valueOf(bitArray.length)).intValue();
+        int arrayIndex = hash.remainder(BigInteger.valueOf(bitArray.length)).intValue();
         int bitIndex = hash.remainder(BigInteger.valueOf(64)).intValue();
         bitArray[arrayIndex] |= (1L << bitIndex);
     }
@@ -364,6 +378,7 @@ public class BloomFilter {
     public int getHashFunctions() {
         return hashFunctions;
     }
+
     /**
      * setBitArray
      * @return
@@ -506,11 +521,12 @@ public class BloomFilter {
      * @param message message
      */
     private void logIfEnabled(Consumer<String> logAction, String message) {
-        if (bloomFilter.isLogging()) {
+        if (bloomFilter != null && ! bloomFilter.isLogging) {
             logAction.accept(message);
         }else {
             System.out.println(message);
         }
+
     }
 
     /**
@@ -586,8 +602,10 @@ public class BloomFilter {
             byte[] bytes = fileInputStream.readAllBytes();
             String s = new String(bytes);
 
+            // json to object
+            BloomInformation info = JSON.parseObject(s, BloomInformation.class);
 
-            return null;
+            return info;
         } catch (FileNotFoundException e) {
             throw new RuntimeException("读取文件失败: " + e.getMessage());
         } catch (IOException e) {

@@ -1,6 +1,6 @@
 package io.github.dalowed.annotation;
 
-import io.github.dalowed.configuration.BloomConfiguration;
+import io.github.dalowed.filter.BloomConfiguration;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
 

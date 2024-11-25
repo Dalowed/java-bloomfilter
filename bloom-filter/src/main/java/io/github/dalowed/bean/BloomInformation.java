@@ -28,7 +28,7 @@ public class BloomInformation {
      * @param falsePositiveProbability falsePositiveProbability
      * @param isLogging enable log
      */
-    public BloomInformation(String description, long size, int hashFunctions, List<String> seeds, long expectedInsertions, double falsePositiveProbability, boolean isLogging) {
+    protected BloomInformation(String description, long size, int hashFunctions, List<String> seeds, long expectedInsertions, double falsePositiveProbability, boolean isLogging) {
         this.description = description;
         this.size = size;
         this.hashFunctions = hashFunctions;
