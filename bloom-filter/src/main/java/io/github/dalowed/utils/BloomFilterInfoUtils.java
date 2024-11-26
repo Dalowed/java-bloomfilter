@@ -19,6 +19,7 @@ public class BloomFilterInfoUtils {
 
     /**
      * generate bitmap
+     * @param bitArray bloomfilter bitmap
      * @return {@link Boolean}
      */
     public static boolean generatorBitmapFile(long[] bitArray) {
@@ -62,6 +63,7 @@ public class BloomFilterInfoUtils {
     }
     /**
      * checkFile
+     * @param file file
      * @return {@link Boolean}
      */
     private static boolean checkFile(File file) {
@@ -89,6 +91,7 @@ public class BloomFilterInfoUtils {
 
     /**
      * Generate filter information(json)
+     * @param bloomFilter bloomfilter
      * @param message message
      * @return {@link Boolean}
      */
