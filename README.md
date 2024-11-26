@@ -1,16 +1,17 @@
 # java-bloomfilter
 基于 Java 实现了一个开箱即用的简易布隆过滤器
 ## 使用
-1. 在 `pom.xml` 中添加依赖
+1. add dependency to `pom.xml`
 ```maven
 <dependency>
     <groupId>io.github.dalowed</groupId>
     <artifactId>bloomfilter</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
 </dependency>
 ```
-2.  在配置文件中编写配置文件, 以下是配置样例
+2.  write a configuration file
 ```yml
+# sample
 bloom-filter:
   expected-insertions: 500000
   false-positive-probability: 0.0001
@@ -21,8 +22,8 @@ bloom-filter:
 #  recovery: true
 ```
 
-3. 在启动类上添加注解 `@EnableBloomFilter`, 即可开启
-
+3. add `@EnableBloomFilter` with `@SpringBootApplication`, then
+you have `BloomFilter` anywhere!
 ### todo
 - [ ] 完善日志功能
 - [ ] 默认配置不起作用
