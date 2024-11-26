@@ -1,12 +1,12 @@
 # java-bloomfilter
-基于 Java 实现了一个开箱即用的简易布隆过滤器
+基于 Java 实现了一个开箱即用的简易布隆过滤器(A maximum of one billion parameters are supported BloomFilter)
 ## 使用
 1. add dependency to `pom.xml`
 ```maven
 <dependency>
     <groupId>io.github.dalowed</groupId>
     <artifactId>bloomfilter</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 2.  write a configuration file
