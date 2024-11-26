@@ -1,6 +1,5 @@
 package io.github.dalowed.filter;
 
-import com.alibaba.fastjson.JSON;
 import io.github.dalowed.bean.BloomInformation;
 import io.micrometer.common.util.StringUtils;
 import org.slf4j.Logger;
@@ -8,9 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,6 +21,8 @@ import java.util.stream.Stream;
 import static io.github.dalowed.constants.CommonConstants.MD5;
 import static io.github.dalowed.constants.CommonConstants.SHA_1;
 import static io.github.dalowed.constants.CommonConstants.SHA_256;
+import static io.github.dalowed.utils.BloomFilterInfoUtils.getBloomInfo;
+import static io.github.dalowed.utils.BloomFilterInfoUtils.loadingBitMap;
 
 
 /**
@@ -409,118 +408,6 @@ public class BloomFilter {
     }
 
     /**
-     * generate bitmap
-     * @return {@link Boolean}
-     */
-    public boolean generatorBitmapFile() {
-        FileOutputStream fos = null;
-        try {
-            // 创建一个 FileWriter 对象，然后用它创建一个 BufferedWriter 对象
-            String filePath = "bitmap/bitmap.bin";
-            File file = new File(filePath);
-
-            checkFile(file);
-
-            fos = new FileOutputStream(filePath);
-
-            for (int i = 0; i < bitArray.length; i++) {
-
-                ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-                buffer.putLong(bitArray[i]);
-
-
-                fos.write(buffer.array());
-            }
-//            log.info("bitmap保存成功,文件位置:{}", filePath);
-            logIfEnabled(log::info, "bitmap保存成功,文件位置: " + filePath);
-            return true;
-        } catch (IOException e) {
-//            log.error("bitmap信息保存失败:{}", e.getMessage());
-            logIfEnabled(log::error, "bitmap信息保存失败: " + e.getMessage());
-            return false;
-        }finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    logIfEnabled(log::error, "关闭流失败: " + e.getMessage());
-                }
-            }
-        }
-    }
-
-    /**
-     * checkFile
-     * @return {@link Boolean}
-     */
-    private boolean checkFile(File file) {
-        // 确保父目录存在
-        if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-            logIfEnabled(log::error, "Failed to create directories.");
-            return false;
-        }
-
-        // 确保文件存在
-        try {
-            if (!file.exists() && !file.createNewFile()) {
-                logIfEnabled(log::error, "Failed to create file.");
-                return false;
-            }
-        } catch (IOException e) {
-            logIfEnabled(log::error, "创建文件失败: " + e.getMessage());
-        }
-
-        return true;
-    }
-
-    /**
-     * Generate filter information(json)
-     * @param message message
-     * @return {@link Boolean}
-     */
-    // 生成状态信息
-    public boolean generatorInfo(String message) {
-        FileOutputStream fileOutputStream = null;
-        try {
-            String filePath = "bitmap/info.txt";
-            File file = new File(filePath);
-
-            checkFile(file);
-
-            fileOutputStream = new FileOutputStream(file);
-
-            BloomInformation information = new BloomInformation();
-            information.setSeeds(bloomFilter.getHashFunctionsSaltList());
-            information.setSize(bloomFilter.getSize());
-            information.setHashFunctions(bloomFilter.getHashFunctions());
-            information.setLogging(bloomFilter.isLogging());
-            information.setExpectedInsertions(bloomFilter.getExpectedInsertions());
-            information.setFalsePositiveProbability(bloomFilter.getFalsePositiveProbability());
-
-            information.setDescription(message);
-
-            fileOutputStream.write(information.toString().getBytes());
-            fileOutputStream.flush();
-
-            logIfEnabled(log::info, "过滤器信息保存成功, 文件位置:" + filePath);
-            return true;
-        } catch (IOException e) {
-            logIfEnabled(log::info, "生成信息文件失败: " + e.getMessage());
-            return false;
-        }finally {
-//            log.info("过滤器信息保存成功");
-            try {
-                if (fileOutputStream != null) {
-                    fileOutputStream.close();
-                }
-            } catch (IOException e) {
-//                log.error(e.getMessage());
-                logIfEnabled(log::error, e.getMessage());
-            }
-        }
-    }
-
-    /**
      * logIfEnabled
      * @param logAction logAction
      * @param message message
@@ -530,66 +417,6 @@ public class BloomFilter {
             logAction.accept(message);
         }else {
             System.out.println(message);
-        }
-
-    }
-
-    /**
-     * loading bitmap
-     * @param size bitmap size
-     * @return {@link Long[] }
-     */
-    private static long[] loadingBitMap(long size) {
-        File filename = new File("bitmap/bitmap.bin");
-        BufferedInputStream in = null;
-        try {
-            in = new BufferedInputStream(new FileInputStream(filename));
-            byte[] temp = new byte[8];
-            long num = 0;
-            int count = 0;
-            long[] longs = new long[(int)(size + 63) / 64];
-            while(in.read(temp) != -1){
-                for (byte b : temp) {
-                    num = (num << 8) | (b & 0xFF);
-                }
-                longs[count++] = num;
-                num = 0;
-            }
-            return longs;
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("找不到文件: " + e);
-        } catch (IOException e) {
-            throw new RuntimeException("文件读取失败: " + e.getMessage());
-        }finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
-
-    /**
-     *  TODO json to object
-     * @return {@link BloomInformation }
-     */
-    private static BloomInformation getBloomInfo() {
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream("bitmap/info.txt");
-            byte[] bytes = fileInputStream.readAllBytes();
-            String s = new String(bytes);
-
-            // json to object
-            BloomInformation info = JSON.parseObject(s, BloomInformation.class);
-
-            return info;
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("读取文件失败: " + e.getMessage());
-        } catch (IOException e) {
-            throw new RuntimeException("读取文件内容失败: " + e.getMessage());
         }
     }
 }
