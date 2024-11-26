@@ -535,31 +535,6 @@ public class BloomFilter {
     }
 
     /**
-     * loading bloomfilter information
-     */
-    private void loadingInfo() {
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream("bitmap/info.txt");
-            byte[] allBytes = fileInputStream.readAllBytes();
-
-        } catch (FileNotFoundException e) {
-            logIfEnabled(log::error, "读取文件失败, 请检查文件是否存在！" + e.getMessage());
-        } catch (IOException e) {
-            logIfEnabled(log::error, "读取文件失败，请检查文件权限！ " + e.getMessage());
-        } finally {
-            if (fileInputStream != null) {
-                try {
-                    fileInputStream.close();
-                } catch (IOException e) {
-                    logIfEnabled(log::error, "关闭流失败" + e.getMessage());
-                }
-            }
-        }
-
-    }
-
-    /**
      * loading bitmap
      * @param size bitmap size
      * @return {@link Long[] }
